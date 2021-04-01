@@ -58,4 +58,4 @@ app.get('/', (req, res) => {
 })
 
 const port = 5055;
-app.listen(port)
+app.listen(process.env.PORT || port)
