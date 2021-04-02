@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 
 app.use(cors());
 app.use(express.json());
@@ -17,13 +18,14 @@ client.connect(err => {
   const orderCollection = client.db("healthyGroceries").collection("orders");
   console.log('db connected')
 
-  // app.post('/addProducts', (req, res) => {
-  //   const products = req.body;
-  //   productCollection.insertMany(products)
-  //     .then(result => {
-  //       console.log(result);
-  //     })
-  // })
+  app.post('/addProduct', (req, res) => {
+    const product = req.body;
+    console.log('Pd', product);
+    productCollection.insertOne(product)
+      .then(result => {
+        console.log(result.insertedCount);
+      })
+  })
 
   app.get('/products', (req, res) => {
     productCollection.find({})
@@ -46,6 +48,14 @@ client.connect(err => {
     orderCollection.find({email: req.query.email})
     .toArray((err, documents) => {
       res.send(documents);
+    })
+  })
+
+  app.delete('/deleteProduct/:id', (req, res) => {
+    console.log(req.params.id);
+    productCollection.deleteOne({_id: ObjectId(req.params.id)})
+    .then(result => {
+      console.log(result.deletedCount)
     })
   })
 
